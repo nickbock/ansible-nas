@@ -1,13 +1,17 @@
 tests/test.yml
 site
 .vagrant
-roles
 *.retry
 *.log
 inventories/hoarder/
+inventories
+.cache
 
 # Vim
 [._]sw[a-p]
 
 # Session
 Session.vim
+
+# IntelliJ
+/.idea/
