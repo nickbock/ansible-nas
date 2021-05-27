@@ -24,13 +24,14 @@
       - name: "bockynet"
     purge_networks: yes
     env:
+      NVIDIA_VISIBLE_DEVICES: "all"
       TZ: "{{ ansible_nas_timezone }}"
       PUID: "{{ plex_user_id }}"
       PGID: "{{ plex_group_id }}"
       VERSION: "latest"
     restart_policy: unless-stopped
-    devices:
-      - "/dev/dri:/dev/dri"
+    #devices:
+    #  - "/dev/dri:/dev/dri"
     memory: 2g
     labels:
       traefik.enable: "{{ plex_available_externally }}"        
