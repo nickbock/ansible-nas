@@ -1,0 +1,46 @@
+[http]
+  [http.middlewares]
+    [http.middlewares.mw-ipWhiteList.ipWhiteList]
+      sourceRange = ["127.0.0.1/32" , "192.168.2.1/24" , "192.168.23.1/24"]
+    [http.middlewares.ratelimit.rateLimit]
+      average = 100
+      burst = 50
+    [http.middlewares.mw-authelia.forwardAuth]
+      address = "http://authelia:9091/api/verify?rd=https://authelia.{{ ansible_nas_domain }}"
+      #address = "https://authelia.{{ ansible_nas_domain }}/api/verify?rd=https://authelia.{{ ansible_nas_domain }}"
+      trustForwardHeader = true
+      authResponseHeaders = ["Remote-Users", "Remote-Groups"]
+    [http.middlewares.mw-secure-headers]
+      [http.middlewares.mw-secure-headers.headers]
+        accessControlAllowMethods= ["GET", "OPTIONS", "PUT"]
+        accessControlMaxAge = 100
+        hostsProxyHeaders = ["X-Forwarded-Host"]
+        sslRedirect = true
+        stsSeconds = 63072000
+        stsIncludeSubdomains = true
+        stsPreload = true
+        forceSTSHeader = true
+#       frameDeny = true #overwritten by customFrameOptionsValue
+        customFrameOptionsValue = "allow-from https:{{ ansible_nas_domain }}" #CSP takes care of this but may be needed for organizr.
+        contentTypeNosniff = true
+        browserXssFilter = true
+#       sslForceHost = true # add sslHost to all of the services
+#       sslHost = "{{ ansible_nas_domain }}"
+        referrerPolicy = "same-origin"
+#       Setting contentSecurityPolicy is more secure but it can break things. Proper auth will reduce the risk.
+#       the below line also breaks some apps due to 'none' - sonarr, radarr, etc.
+#       contentSecurityPolicy = "frame-ancestors '*.example.com:*';object-src 'none';script-src 'none';"
+        featurePolicy = "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
+#       permissionsPolicy = "camera=(), geolocation=(), microphone=(), payment=(), usb=(), vr=();"
+      [http.middlewares.mww-secure-headers.headers.customResponseHeaders]
+        X-Robots-Tag = "none,noarchive,nosnippet,notranslate,noimageindex,"
+        server = ""
+    [http.middlewares.secured-chain.chain] 
+    # traefik.http.routers.plex.middlewares: "secured-chain@file"
+      middlewares = ["ratelimit","mw-secure-headers","mw-ipWhiteList"]
+    [http.middlewares.no-auth-chain.chain]
+    # traefik.http.routers.plex.middlewares: "no-auth-chain@file"
+      middlewares = ["ratelimit","mw-secure-headers"]
+    [http.middlewares.authelia-chain.chain]
+    # traefik.http.routers.plex.middlewares: "authelia-chain@file"
+      middlewares = ["ratelimit","mw-secure-headers","mw-authelia"]

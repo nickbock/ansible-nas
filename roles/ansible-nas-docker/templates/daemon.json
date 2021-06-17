@@ -1,5 +1,13 @@
 {
   "data-root": "{{ docker_image_directory }}",
   "storage-driver": "{{ docker_storage_driver }}",
-  "shutdown-timeout": 30
+  "shutdown-timeout": 30,
+
+  "default-runtime": "nvidia",
+  "runtimes": {
+     "nvidia": {
+         "path": "/usr/bin/nvidia-container-runtime",
+         "runtimeArgs": []
+     }
+ }
 }

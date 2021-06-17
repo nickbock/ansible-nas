@@ -4,6 +4,9 @@
     name: glances
     image: nicolargo/glances
     pull: true
+    networks:
+      - name: "{{ docker_networkname }}"
+    purge_networks: yes
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/etc/timezone:/etc/timezone:ro"

@@ -1,9 +1,14 @@
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = false
+
 [entryPoints]
   [entryPoints.web]
     address = ":80"
 
   [entryPoints.web.http.redirections.entryPoint]
     to = "websecure"
+    scheme = "https"
 
   [entryPoints.websecure]
     address = ":{{ traefik_port_https }}"
@@ -11,19 +16,18 @@
       [entryPoints.websecure.http.tls]
         certResolver = "letsencrypt"
 
-        [entryPoints.websecure.http.tls.domains]
-          main = "{{ ansible_nas_domain }}"
-          sans = [
-            "*.{{ ansible_nas_domain }}"
-          ]
-
   [entryPoints.traefik]
     address = ":{{ traefik_port_ui }}"
 
 [providers]
   providersThrottleDuration = "2s"
+
+  [providers.file]
+  directory = "/etc/traefik/conf"
+  
   [providers.docker]
     exposedbydefault = false
+    defaultRule = "Host(`{% raw -%}{{ normalize .Name }}{% endraw -%}.{{ ansible_nas_domain }}`)"
 
 [api]
   insecure = true
@@ -44,3 +48,7 @@
 
       [certificatesResolvers.letsencrypt.acme.dnsChallenge]
         provider = "{{ traefik_dns_provider }}"
+        resolvers = ["8.8.8.8:53", "8.8.8.8:53"]
+
+[pilot]
+    token = ""

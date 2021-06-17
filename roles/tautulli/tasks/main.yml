@@ -28,6 +28,5 @@
       traefik.enable: "{{ tautulli_available_externally }}"
       traefik.http.routers.tautulli.rule: "Host(`{{ tautulli_hostname }}.{{ ansible_nas_domain }}`)"
       traefik.http.routers.tautulli.tls.certresolver: "letsencrypt"
-      traefik.http.routers.tautulli.tls.domains[0].main: "{{ ansible_nas_domain }}"
-      traefik.http.routers.tautulli.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
       traefik.http.services.tautulli.loadbalancer.server.port: "8181"
+      traefik.http.routers.tautulli.middlewares: "secured-chain@file"

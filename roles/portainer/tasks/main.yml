@@ -11,6 +11,9 @@
     name: portainer
     image: portainer/portainer-ce
     pull: true
+    networks:
+      - name: "{{ docker_networkname }}"
+    purge_networks: yes
     volumes:
       - "{{ portainer_data_directory }}:/data:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -23,6 +26,5 @@
       traefik.enable: "{{ portainer_available_externally }}"
       traefik.http.routers.portainer.rule: "Host(`{{ portainer_hostname }}.{{ ansible_nas_domain }}`)"
       traefik.http.routers.portainer.tls.certresolver: "letsencrypt"
-      traefik.http.routers.portainer.tls.domains[0].main: "{{ ansible_nas_domain }}"
-      traefik.http.routers.portainer.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
       traefik.http.services.portainer.loadbalancer.server.port: "9000"
+      traefik.http.routers.portainer.middlewares: "secured-chain@file"

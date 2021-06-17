@@ -13,7 +13,7 @@
     image: mariadb
     pull: true
     networks:
-      - name: "bockynet"
+      - name: "{{ docker_networkname }}"
     purge_networks: yes
     volumes:
       - "{{ nextcloud_data_directory }}/mysql:/var/lib/mysql:rw"
@@ -31,7 +31,7 @@
     image: nextcloud
     pull: true
     networks:
-      - name: "bockynet"
+      - name: "{{ docker_networkname }}"
     purge_networks: yes
     links:
       - nextcloud-mysql:mysql
@@ -49,8 +49,6 @@
     memory: "{{ nextcloud_memory }}"
     labels:
       traefik.enable: "{{ nextcloud_available_externally }}"     
-      traefik.http.routers.nextcloud.tls: "true"
-      traefik.http.routers.nextcloud.tls.certresolver: "bocky"
-      traefik.http.routers.nextcloud.service: "nextcloud"
       traefik.http.routers.nextcloud.rule: "Host(`{{ nextcloud_hostname }}.{{ ansible_nas_domain }}`)"
       traefik.http.services.nextcloud.loadbalancer.server.port: "80"
+      traefik.http.routers.nextcloud.middlewares: "no-auth-chain@file"

@@ -27,7 +27,5 @@
     labels:
       traefik.enable: "{{ homebridge_available_externally }}"
       traefik.http.routers.homebridge.rule: "Host(`{{ homebridge_hostname }}.{{ ansible_nas_domain }}`)"
-      traefik.http.routers.homebridge.tls.certresolver: "letsencrypt"
-      traefik.http.routers.homebridge.tls.domains[0].main: "{{ ansible_nas_domain }}"
-      traefik.http.routers.homebridge.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
       traefik.http.services.homebridge.loadbalancer.server.port: "8087"
+      traefik.http.routers.homebridge.middlewares: "secured-chain@file"

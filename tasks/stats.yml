@@ -25,7 +25,7 @@
 - name: InfluxDB
   docker_container:
     name: influxdb
-    image: influxdb
+    image: influxdb:1.8
     pull: true
     networks:
       - name: "bockynet"
@@ -114,7 +114,7 @@
       - name: "bockynet"
     purge_networks: yes
     env:
-      GF_INSTALL_PLUGINS: "pr0ps-trackmap-panel,grafana-piechart-panel,natel-discrete-panel,https://github.com/panodata/grafana-map-panel/releases/download/0.9.0/grafana-map-panel-0.9.0.zip;grafana-worldmap-panel-ng"
+      GF_INSTALL_PLUGINS: "pr0ps-trackmap-panel,grafana-piechart-panel,natel-discrete-panel,https://github.com/panodata/grafana-map-panel/releases/download/0.15.0/grafana-map-panel-0.15.0.zip;grafana-worldmap-panel-ng"
       GF_SERVER_DOMAIN: "grafana.{{ ansible_nas_domain }}"
     volumes:
       - "{{ grafana_data_directory }}/data:/var/lib/grafana:rw"
@@ -127,6 +127,4 @@
       traefik.enable: "{{ grafana_available_externally }}"
       traefik.http.routers.grafana.rule: "Host(`grafana.{{ ansible_nas_domain }}`) "
       traefik.http.routers.grafana.tls.certresolver: "letsencrypt"
-      traefik.http.routers.grafana.tls.domains[0].main: "{{ ansible_nas_domain }}"
-      traefik.http.routers.grafana.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
       traefik.http.services.grafana.loadbalancer.server.port: "3000"

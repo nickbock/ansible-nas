@@ -29,6 +29,9 @@
     name: heimdall
     image: "{{ heimdall_docker_image }}"
     pull: true
+    networks:
+      - name: "{{ docker_networkname }}"
+    purge_networks: yes
     volumes:
       - "{{ heimdall_data_directory }}:/config:rw"
     env:
@@ -43,7 +46,5 @@
     labels:
       traefik.enable: "{{ heimdall_available_externally }}"
       traefik.http.routers.heimdall.rule: "Host(`{{ heimdall_hostname }}.{{ ansible_nas_domain }}`)"
-      traefik.http.routers.heimdall.tls.certresolver: "letsencrypt"
-      traefik.http.routers.heimdall.tls.domains[0].main: "{{ ansible_nas_domain }}"
-      traefik.http.routers.heimdall.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
       traefik.http.services.heimdall.loadbalancer.server.port: "80"
+      traefik.http.routers.heimdall.middlewares: "secured-chain@file"
