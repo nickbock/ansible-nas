@@ -1,5 +1,9 @@
 [http]
   [http.middlewares]
+    [http.middlewares.nextcloud-redirectregex.redirectRegex]
+      permanent = true
+      regex = "https://(.*)/.well-known/(card|cal)dav"
+      replacement = "https://${1}/remote.php/dav/"
     [http.middlewares.mw-ipWhiteList.ipWhiteList]
       sourceRange = ["127.0.0.1/32" , "192.168.2.1/24" , "192.168.23.1/24"]
     [http.middlewares.ratelimit.rateLimit]
@@ -39,8 +43,9 @@
     # traefik.http.routers.plex.middlewares: "secured-chain@file"
       middlewares = ["ratelimit","mw-secure-headers","mw-ipWhiteList"]
     [http.middlewares.no-auth-chain.chain]
-    # traefik.http.routers.plex.middlewares: "no-auth-chain@file"
       middlewares = ["ratelimit","mw-secure-headers"]
+    [http.middlewares.bcloud-chain.chain]
+      middlewares = ["ratelimit","mw-secure-headers","nextcloud-redirectregex"]
     [http.middlewares.authelia-chain.chain]
     # traefik.http.routers.plex.middlewares: "authelia-chain@file"
       middlewares = ["ratelimit","mw-secure-headers","mw-authelia"]

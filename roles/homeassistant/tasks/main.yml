@@ -22,5 +22,5 @@
       traefik.http.routers.homeassistant.rule: "Host(`{{ homeassistant_hostname }}.{{ ansible_nas_domain }}`)"
       traefik.http.routers.homeassistant.tls.certresolver: "letsencrypt"
       traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
-      traefik.http.routers.heimdall.middlewares: "secured-chain@file"
+      traefik.http.routers.homeassistant.middlewares: "secured-chain@file"
     memory: "{{ homeassistant_memory }}"
